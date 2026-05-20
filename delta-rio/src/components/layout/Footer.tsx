@@ -4,8 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Phone, MapPin, Clock, ExternalLink } from "lucide-react";
-
-const E = [0.22, 1, 0.36, 1] as [number, number, number, number];
+import { useMobile } from "@/hooks/useMobile";
 
 const InstaSVG = () => (
   <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -27,50 +26,50 @@ const navCols = [
 ];
 
 export default function Footer() {
+  const isMobile = useMobile();
+
   return (
     <footer style={{ position: "relative", background: "var(--dr-bg-surface)", overflow: "hidden" }}>
       <div className="dr-line" style={{ position: "absolute", top: 0, left: 0, right: 0 }} />
       <div style={{ position: "absolute", bottom: 0, left: "50%", transform: "translateX(-50%)", width: 700, height: 280, borderRadius: "50%", background: "rgba(34,163,77,0.025)", filter: "blur(120px)", pointerEvents: "none" }} />
 
-      <div className="dr-container" style={{ position: "relative", zIndex: 1, paddingTop: 64, paddingBottom: 40 }}>
-        {/* Main grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 40, marginBottom: 56 }}>
-          {/* Brand */}
-          <div>
-            <Link href="/" style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20, textDecoration: "none" }}>
-              <div style={{ position: "relative", width: 42, height: 42, borderRadius: 8, overflow: "hidden", background: "#fff", padding: 2, flexShrink: 0 }}>
-                <Image src="/logo.png" alt="Delta Rio Logo" fill sizes="42px" style={{ objectFit: "contain" }} />
-              </div>
-              <div>
-                <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: "#fff", fontSize: 17, letterSpacing: "0.1em" }}>DELTA RIO</div>
-                <div style={{ fontSize: 9, color: "var(--dr-text-dim)", letterSpacing: "0.2em", textTransform: "uppercase", marginTop: 2 }}>Produtos Agrícolas</div>
-              </div>
-            </Link>
-            <p style={{ color: "var(--dr-text-dim)", fontSize: 13, lineHeight: 1.7, marginBottom: 20 }}>
-              Tecnologia, confiança e expertise para o agronegócio brasileiro desde 2011.
-            </p>
-            {/* Social */}
-            <div style={{ display: "flex", gap: 10 }}>
-              {[
-                { href: "https://www.instagram.com/deltariorioverde/", icon: <InstaSVG />, label: "Instagram" },
-                { href: "tel:556430501010", icon: <Phone size={17} />, label: "Telefone" },
-              ].map(s => (
-                <motion.a key={s.label} href={s.href} target={s.href.startsWith("http") ? "_blank" : undefined} rel={s.href.startsWith("http") ? "noopener noreferrer" : undefined} aria-label={s.label} whileHover={{ scale: 1.12, y: -2 }} className="dr-glass" style={{ width: 38, height: 38, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--dr-text-muted)", textDecoration: "none", transition: "color 0.2s" }}>
-                  {s.icon}
-                </motion.a>
-              ))}
+      <div className="dr-container" style={{ position: "relative", zIndex: 1, paddingTop: isMobile ? 48 : 64, paddingBottom: isMobile ? 24 : 40 }}>
+        {/* Brand (always full-width on top) */}
+        <div style={{ marginBottom: isMobile ? 36 : 48 }}>
+          <Link href="/" style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, textDecoration: "none" }}>
+            <div style={{ position: "relative", width: 40, height: 40, borderRadius: 8, overflow: "hidden", background: "#fff", padding: 2, flexShrink: 0 }}>
+              <Image src="/logo.png" alt="Delta Rio Logo" fill sizes="40px" style={{ objectFit: "contain" }} />
             </div>
+            <div>
+              <div style={{ fontFamily: "'Syne',sans-serif", fontWeight: 800, color: "#fff", fontSize: 17, letterSpacing: "0.1em" }}>DELTA RIO</div>
+              <div style={{ fontSize: 9, color: "var(--dr-text-dim)", letterSpacing: "0.2em", textTransform: "uppercase", marginTop: 2 }}>Produtos Agrícolas</div>
+            </div>
+          </Link>
+          <p style={{ color: "var(--dr-text-dim)", fontSize: 13, lineHeight: 1.7, maxWidth: 380, marginBottom: 16 }}>
+            Tecnologia, confiança e expertise para o agronegócio brasileiro desde 2011.
+          </p>
+          <div style={{ display: "flex", gap: 10 }}>
+            {[
+              { href: "https://www.instagram.com/deltariorioverde/", icon: <InstaSVG />, label: "Instagram" },
+              { href: "tel:556430501010", icon: <Phone size={17} />, label: "Telefone" },
+            ].map(s => (
+              <motion.a key={s.label} href={s.href} target={s.href.startsWith("http") ? "_blank" : undefined} rel={s.href.startsWith("http") ? "noopener noreferrer" : undefined} aria-label={s.label} whileHover={{ scale: 1.1, y: -2 }} className="dr-glass" style={{ width: 42, height: 42, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--dr-text-muted)", textDecoration: "none" }}>
+                {s.icon}
+              </motion.a>
+            ))}
           </div>
+        </div>
 
-          {/* Nav columns */}
+        {/* Links + Contact — 2 cols on mobile, 4 on desktop */}
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)", gap: isMobile ? 28 : 40, marginBottom: isMobile ? 36 : 48 }}>
           {navCols.map(col => (
             <div key={col.title}>
-              <h4 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, color: "#fff", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 20 }}>{col.title}</h4>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 10 }}>
+              <h4 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, color: "#fff", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 16 }}>{col.title}</h4>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 9 }}>
                 {col.items.map(item => (
                   <li key={item.name}>
-                    <Link href={item.href} style={{ color: "var(--dr-text-dim)", fontSize: 13, textDecoration: "none", fontFamily: "'Space Grotesk', sans-serif", display: "flex", alignItems: "center", gap: 8, transition: "color 0.2s" }}>
-                      <span style={{ width: 12, height: 1, background: "rgba(34,163,77,0.3)", display: "inline-block", flexShrink: 0 }} />
+                    <Link href={item.href} style={{ color: "var(--dr-text-dim)", fontSize: isMobile ? 12 : 13, textDecoration: "none", fontFamily: "'Space Grotesk',sans-serif", display: "flex", alignItems: "center", gap: 7 }}>
+                      <span style={{ width: 10, height: 1, background: "rgba(34,163,77,0.3)", display: "inline-block", flexShrink: 0 }} />
                       {item.name}
                     </Link>
                   </li>
@@ -79,30 +78,30 @@ export default function Footer() {
             </div>
           ))}
 
-          {/* Contact */}
-          <div>
-            <h4 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, color: "#fff", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 20 }}>Contato</h4>
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {/* Contact block */}
+          <div style={{ gridColumn: isMobile ? "1 / -1" : "auto" }}>
+            <h4 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, color: "#fff", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 16 }}>Contato</h4>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {[
-                { Icon: Phone, label: "Telefone", href: "tel:556430501010", val: "(64) 3050-1010" },
-                { Icon: MapPin, label: "Endereço", href: null, val: "R. das Turmalinas, 208 — Qd. 45\nParq. Bandeirante · Rio Verde — GO\nCEP 75905-630" },
-                { Icon: Clock, label: "Horário", href: null, val: "Seg–Sex: 7h às 18h\nSáb: 7h às 12h" },
+                { Icon: Phone, label: "Telefone", href: "tel:556430501010", val: "(64) 3050-1010", sub: null },
+                { Icon: MapPin, label: "Endereço", href: null, val: "R. das Turmalinas, 208\nRio Verde — GO", sub: null },
+                { Icon: Clock, label: "Horário", href: null, val: "Seg–Sex: 7h–18h · Sáb: 7h–12h", sub: null },
               ].map(({ Icon, label, href, val }) => (
-                <div key={label} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(34,163,77,0.1)", border: "1px solid rgba(34,163,77,0.2)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--dr-green)", flexShrink: 0 }}>
-                    <Icon size={15} />
+                <div key={label} style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                  <div style={{ width: 30, height: 30, borderRadius: 8, background: "rgba(34,163,77,0.1)", border: "1px solid rgba(34,163,77,0.2)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--dr-green)", flexShrink: 0 }}>
+                    <Icon size={14} />
                   </div>
                   <div>
-                    <div style={{ color: "var(--dr-text-dim)", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 3, fontFamily: "'Space Grotesk'" }}>{label}</div>
+                    <div style={{ color: "var(--dr-text-dim)", fontSize: 9, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 2, fontFamily: "'Space Grotesk'" }}>{label}</div>
                     {href ? (
-                      <a href={href} style={{ color: "#fff", fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 15, textDecoration: "none" }}>{val}</a>
+                      <a href={href} style={{ color: "#fff", fontFamily: "'Space Grotesk',sans-serif", fontWeight: 700, fontSize: isMobile ? 14 : 15, textDecoration: "none" }}>{val}</a>
                     ) : (
-                      <div style={{ color: "var(--dr-text-muted)", fontSize: 12.5, lineHeight: 1.6, fontFamily: "'Space Grotesk', sans-serif", whiteSpace: "pre-line" }}>{val}</div>
+                      <div style={{ color: "var(--dr-text-muted)", fontSize: 12, lineHeight: 1.6, fontFamily: "'Space Grotesk',sans-serif", whiteSpace: "pre-line" }}>{val}</div>
                     )}
                   </div>
                 </div>
               ))}
-              <a href="https://www.instagram.com/deltariorioverde/" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--dr-text-dim)", fontSize: 13, textDecoration: "none", fontFamily: "'Space Grotesk'" }}>
+              <a href="https://www.instagram.com/deltariorioverde/" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--dr-text-dim)", fontSize: 12, textDecoration: "none", fontFamily: "'Space Grotesk'" }}>
                 <InstaSVG /> @deltariorioverde <ExternalLink size={11} />
               </a>
             </div>
@@ -110,11 +109,9 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div style={{ paddingTop: 24, borderTop: "1px solid rgba(255,255,255,0.05)", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-          <p style={{ color: "var(--dr-text-faint)", fontSize: 12, fontFamily: "'Space Grotesk', sans-serif" }}>
-            © {new Date().getFullYear()} Delta Rio Produtos Agrícolas LTDA · CNPJ 13.978.765/0001-42
-          </p>
-          <p style={{ color: "var(--dr-text-faint)", fontSize: 12, fontFamily: "'Space Grotesk', sans-serif" }}>Rio Verde · Goiás · Brasil</p>
+        <div style={{ paddingTop: 20, borderTop: "1px solid rgba(255,255,255,0.05)", display: "flex", flexWrap: "wrap", flexDirection: isMobile ? "column" : "row", justifyContent: "space-between", alignItems: isMobile ? "center" : "center", gap: 8, textAlign: "center" }}>
+          <p style={{ color: "var(--dr-text-faint)", fontSize: 11, fontFamily: "'Space Grotesk',sans-serif" }}>© {new Date().getFullYear()} Delta Rio Produtos Agrícolas LTDA · CNPJ 13.978.765/0001-42</p>
+          <p style={{ color: "var(--dr-text-faint)", fontSize: 11, fontFamily: "'Space Grotesk',sans-serif" }}>Rio Verde · Goiás · Brasil</p>
         </div>
       </div>
     </footer>

@@ -7,15 +7,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Phone, Menu, X, ChevronRight } from "lucide-react";
 import Image from "next/image";
 
-const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
+const E = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
 const links = [
-  { label: "Início", href: "/" },
+  { label: "Início",        href: "/" },
   { label: "Institucional", href: "/institucional" },
-  { label: "Serviços", href: "/servicos" },
-  { label: "Galeria", href: "/galeria" },
-  { label: "Insights", href: "/insights" },
-  { label: "Contato", href: "/contato" },
+  { label: "Serviços",      href: "/servicos" },
+  { label: "Galeria",       href: "/galeria" },
+  { label: "Insights",      href: "/insights" },
+  { label: "Contato",       href: "/contato" },
 ];
 
 export default function Navbar() {
@@ -32,8 +32,17 @@ export default function Navbar() {
   useEffect(() => { setOpen(false); }, [pathname]);
 
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    if (open) {
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    };
   }, [open]);
 
   return (
@@ -41,163 +50,186 @@ export default function Navbar() {
       <motion.header
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: EASE }}
+        transition={{ duration: 0.8, ease: E }}
         style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 50,
+          position: "fixed", top: 0, left: 0, right: 0, zIndex: 50,
           transition: "background 0.4s ease, padding 0.4s ease, box-shadow 0.4s ease",
-          background: scrolled ? "rgba(6, 10, 7, 0.92)" : "transparent",
+          background: scrolled ? "rgba(6,10,7,0.92)" : "transparent",
           backdropFilter: scrolled ? "blur(32px)" : "none",
           WebkitBackdropFilter: scrolled ? "blur(32px)" : "none",
           borderBottom: scrolled ? "1px solid rgba(34,163,77,0.12)" : "1px solid transparent",
           boxShadow: scrolled ? "0 4px 30px rgba(0,0,0,0.4)" : "none",
-          padding: scrolled ? "12px 0" : "20px 0",
+          paddingTop: scrolled ? 10 : 16,
+          paddingBottom: scrolled ? 10 : 16,
+          /* Safe area top for notch */
+          paddingLeft: "env(safe-area-inset-left, 0px)",
+          paddingRight: "env(safe-area-inset-right, 0px)",
         }}
       >
         <div className="dr-container" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           {/* Logo */}
-          <Link href="/" id="nav-logo" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
-            <div style={{ position: "relative", width: 44, height: 44, borderRadius: 8, overflow: "hidden", flexShrink: 0, background: "#fff", padding: 2 }}>
-              <Image src="/logo.png" alt="Delta Rio Logo" fill sizes="44px" style={{ objectFit: "contain" }} />
+          <Link href="/" id="nav-logo" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+            <div style={{ position: "relative", width: 40, height: 40, borderRadius: 8, overflow: "hidden", flexShrink: 0, background: "#fff", padding: 2 }}>
+              <Image src="/logo.png" alt="Delta Rio Logo" fill sizes="40px" style={{ objectFit: "contain" }} />
             </div>
             <div>
-              <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: "#fff", fontSize: 17, lineHeight: 1, letterSpacing: "0.1em" }}>DELTA RIO</div>
-              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 9, color: "var(--dr-text-dim)", letterSpacing: "0.22em", textTransform: "uppercase", marginTop: 3 }}>Produtos Agrícolas</div>
+              <div style={{ fontFamily: "'Syne',sans-serif", fontWeight: 800, color: "#fff", fontSize: 16, lineHeight: 1, letterSpacing: "0.1em" }}>DELTA RIO</div>
+              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 8, color: "var(--dr-text-dim)", letterSpacing: "0.22em", textTransform: "uppercase", marginTop: 3 }}>Produtos Agrícolas</div>
             </div>
           </Link>
 
           {/* Desktop nav */}
-          <nav style={{ display: "flex", alignItems: "center", gap: 4 }} className="hidden lg:flex" aria-label="Menu principal">
+          <nav style={{ display: "flex", alignItems: "center", gap: 2 }} className="hidden lg:flex">
             {links.map((link) => {
               const active = pathname === link.href;
               return (
-                <Link key={link.href} href={link.href} style={{
-                  position: "relative",
-                  padding: "8px 16px",
-                  borderRadius: 10,
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 500,
-                  fontSize: 14,
-                  color: active ? "#fff" : "var(--dr-text-muted)",
-                  textDecoration: "none",
-                  transition: "color 0.2s",
-                  background: active ? "rgba(34,163,77,0.1)" : "transparent",
-                  border: active ? "1px solid rgba(34,163,77,0.22)" : "1px solid transparent",
-                }}>
+                <Link key={link.href} href={link.href} style={{ position: "relative", padding: "8px 14px", borderRadius: 10, fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: 14, color: active ? "#fff" : "var(--dr-text-muted)", textDecoration: "none", background: active ? "rgba(34,163,77,0.1)" : "transparent", border: active ? "1px solid rgba(34,163,77,0.22)" : "1px solid transparent", transition: "all 0.2s" }}>
                   {link.label}
                 </Link>
               );
             })}
           </nav>
 
-          {/* CTA */}
+          {/* Desktop CTA */}
           <div className="hidden lg:flex" style={{ alignItems: "center", gap: 12 }}>
-            <a href="tel:556430501010" id="nav-phone" style={{
-              display: "flex", alignItems: "center", gap: 8,
-              fontFamily: "'Space Grotesk', sans-serif", fontSize: 14, fontWeight: 500,
-              color: "var(--dr-text-muted)", textDecoration: "none", transition: "color 0.2s",
-            }}>
-              <Phone size={16} />
-              (64) 3050-1010
+            <a href="tel:556430501010" style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "'Space Grotesk',sans-serif", fontSize: 14, fontWeight: 500, color: "var(--dr-text-muted)", textDecoration: "none" }}>
+              <Phone size={16} /> (64) 3050-1010
             </a>
-            <Link href="/contato" id="nav-cta" className="dr-btn dr-btn-primary" style={{ padding: "10px 20px", borderRadius: 12, fontSize: 14, gap: 8 }}>
+            <Link href="/contato" className="dr-btn dr-btn-primary" style={{ padding: "10px 18px", borderRadius: 12, fontSize: 14, gap: 8 }}>
               Fale Conosco <ChevronRight size={16} />
             </Link>
           </div>
 
-          {/* Mobile toggle */}
-          <button
-            className="lg:hidden dr-glass"
-            onClick={() => setOpen(!open)}
-            aria-label={open ? "Fechar menu" : "Abrir menu"}
-            id="mobile-toggle"
-            style={{ width: 40, height: 40, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", border: "none", cursor: "pointer" }}
-          >
-            {open ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          {/* Mobile: Phone + Toggle */}
+          <div className="flex lg:hidden" style={{ alignItems: "center", gap: 8 }}>
+            <a href="tel:556430501010" aria-label="Ligar" className="dr-glass" style={{ width: 40, height: 40, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--dr-green)", textDecoration: "none" }}>
+              <Phone size={18} />
+            </a>
+            <button
+              onClick={() => setOpen(!open)}
+              aria-label={open ? "Fechar menu" : "Abrir menu"}
+              id="mobile-toggle"
+              className="dr-glass"
+              style={{ width: 40, height: 40, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", border: "none", background: "rgba(12,18,12,0.65)", backdropFilter: "blur(24px)", borderColor: "var(--dr-green-border)" }}
+            >
+              <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.3 }}>
+                {open ? <X size={20} /> : <Menu size={20} />}
+              </motion.div>
+            </button>
+          </div>
         </div>
       </motion.header>
 
-      {/* Mobile menu */}
+      {/* ── MOBILE FULLSCREEN MENU ── */}
       <AnimatePresence>
         {open && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            style={{ position: "fixed", inset: 0, zIndex: 40 }}
-            onClick={() => setOpen(false)}
-          >
-            <div style={{ position: "absolute", inset: 0, background: "rgba(4,7,4,0.95)", backdropFilter: "blur(24px)" }} />
+          <>
+            {/* Backdrop */}
             <motion.div
+              key="backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              onClick={() => setOpen(false)}
+              style={{ position: "fixed", inset: 0, zIndex: 48, background: "rgba(3,6,3,0.7)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }}
+            />
+
+            {/* Drawer */}
+            <motion.div
+              key="drawer"
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ duration: 0.35, ease: EASE }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
               style={{
-                position: "absolute", right: 0, top: 0, bottom: 0,
-                width: "min(360px, 90vw)",
-                background: "rgba(10,16,10,0.98)",
+                position: "fixed", top: 0, right: 0, bottom: 0, zIndex: 49,
+                width: "min(320px, 88vw)",
+                background: "rgba(6,10,7,0.98)",
+                backdropFilter: "blur(40px)",
+                WebkitBackdropFilter: "blur(40px)",
                 borderLeft: "1px solid rgba(34,163,77,0.15)",
                 display: "flex", flexDirection: "column",
+                /* Safe areas */
+                paddingTop: "max(60px, calc(60px + env(safe-area-inset-top)))",
+                paddingBottom: "max(24px, env(safe-area-inset-bottom))",
               }}
-              onClick={(e) => e.stopPropagation()}
+              onClick={e => e.stopPropagation()}
             >
-              {/* Header */}
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 24px", borderBottom: "1px solid rgba(34,163,77,0.12)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <div style={{ position: "relative", width: 38, height: 38, borderRadius: 8, overflow: "hidden", background: "#fff", padding: 2, flexShrink: 0 }}>
-                    <Image src="/logo.png" alt="Delta Rio Logo" fill sizes="38px" style={{ objectFit: "contain" }} />
-                  </div>
-                  <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: "#fff", fontSize: 17, letterSpacing: "0.1em" }}>DELTA RIO</span>
+              {/* Close */}
+              <button
+                onClick={() => setOpen(false)}
+                style={{ position: "absolute", top: "max(20px, env(safe-area-inset-top, 20px))", right: 20, width: 40, height: 40, borderRadius: 12, background: "rgba(34,163,77,0.08)", border: "1px solid rgba(34,163,77,0.18)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--dr-text-muted)" }}
+              >
+                <X size={18} />
+              </button>
+
+              {/* Logo */}
+              <div style={{ paddingLeft: 24, paddingRight: 24, marginBottom: 32, display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ position: "relative", width: 36, height: 36, borderRadius: 8, overflow: "hidden", background: "#fff", padding: 2, flexShrink: 0 }}>
+                  <Image src="/logo.png" alt="Delta Rio" fill sizes="36px" style={{ objectFit: "contain" }} />
                 </div>
-                <button onClick={() => setOpen(false)} style={{ color: "var(--dr-text-dim)", background: "none", border: "none", cursor: "pointer" }}>
-                  <X size={20} />
-                </button>
+                <div style={{ fontFamily: "'Syne',sans-serif", fontWeight: 800, color: "#fff", fontSize: 15, letterSpacing: "0.1em" }}>DELTA RIO</div>
               </div>
 
-              {/* Links */}
-              <nav style={{ flex: 1, padding: "16px", display: "flex", flexDirection: "column", gap: 4 }}>
-                {links.map((link, i) => (
-                  <motion.div key={link.href} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05, duration: 0.25 }}>
-                    <Link href={link.href} style={{
-                      display: "flex", alignItems: "center", justifyContent: "space-between",
-                      padding: "14px 16px", borderRadius: 12, textDecoration: "none",
-                      fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: 18,
-                      color: pathname === link.href ? "#fff" : "var(--dr-text-muted)",
-                      background: pathname === link.href ? "rgba(34,163,77,0.12)" : "transparent",
-                      border: `1px solid ${pathname === link.href ? "rgba(34,163,77,0.3)" : "transparent"}`,
-                      transition: "all 0.2s",
-                    }}>
-                      {link.label}
-                      <ChevronRight size={16} style={{ color: pathname === link.href ? "var(--dr-green)" : "var(--dr-text-dim)" }} />
-                    </Link>
-                  </motion.div>
-                ))}
+              {/* Nav links with stagger */}
+              <nav style={{ flex: 1, paddingLeft: 16, paddingRight: 16, display: "flex", flexDirection: "column", gap: 4, overflowY: "auto" }}>
+                {links.map((link, i) => {
+                  const active = pathname === link.href;
+                  return (
+                    <motion.div
+                      key={link.href}
+                      initial={{ opacity: 0, x: 24 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.06, duration: 0.3, ease: E }}
+                    >
+                      <Link
+                        href={link.href}
+                        id={`mobile-nav-${link.href.replace("/", "") || "home"}`}
+                        style={{
+                          display: "flex", alignItems: "center", justifyContent: "space-between",
+                          padding: "16px 18px", borderRadius: 14, textDecoration: "none",
+                          fontFamily: "'Syne',sans-serif", fontWeight: active ? 800 : 600,
+                          fontSize: 20, letterSpacing: "0.02em",
+                          color: active ? "#fff" : "var(--dr-text-muted)",
+                          background: active ? "rgba(34,163,77,0.12)" : "transparent",
+                          border: `1px solid ${active ? "rgba(34,163,77,0.28)" : "transparent"}`,
+                          transition: "all 0.2s",
+                        }}
+                      >
+                        {link.label}
+                        <ChevronRight size={16} style={{ color: active ? "var(--dr-green)" : "var(--dr-text-faint)", flexShrink: 0 }} />
+                      </Link>
+                    </motion.div>
+                  );
+                })}
               </nav>
 
-              {/* Footer */}
-              <div style={{ padding: "16px 24px", borderTop: "1px solid rgba(34,163,77,0.12)", display: "flex", flexDirection: "column", gap: 12 }}>
-                <a href="tel:556430501010" style={{
-                  display: "flex", alignItems: "center", gap: 12, padding: "14px 16px",
-                  borderRadius: 12, background: "rgba(34,163,77,0.06)", border: "1px solid rgba(34,163,77,0.15)",
-                  textDecoration: "none",
-                }}>
-                  <Phone size={20} style={{ color: "var(--dr-green)", flexShrink: 0 }} />
-                  <div>
-                    <div style={{ fontFamily: "'Space Grotesk'", fontSize: 11, color: "var(--dr-text-dim)", marginBottom: 2 }}>Telefone</div>
-                    <div style={{ fontFamily: "'Space Grotesk'", fontWeight: 700, color: "#fff", fontSize: 16 }}>(64) 3050-1010</div>
-                  </div>
+              {/* Bottom CTA */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.3, ease: E }}
+                style={{ padding: "16px 20px", borderTop: "1px solid rgba(34,163,77,0.1)", display: "flex", flexDirection: "column", gap: 10 }}
+              >
+                <a
+                  href="tel:556430501010"
+                  id="mobile-phone-cta"
+                  className="dr-btn dr-btn-primary"
+                  style={{ width: "100%", padding: "16px", borderRadius: 14, fontSize: 16, gap: 10, justifyContent: "center" }}
+                >
+                  <Phone size={18} /> (64) 3050-1010
                 </a>
-                <Link href="/contato" className="dr-btn dr-btn-primary" style={{ width: "100%", padding: "14px", borderRadius: 12, fontSize: 15, gap: 8, justifyContent: "center" }}>
-                  Solicitar Atendimento <ChevronRight size={18} />
+                <Link
+                  href="/contato"
+                  className="dr-btn dr-btn-outline"
+                  style={{ width: "100%", padding: "14px", borderRadius: 14, fontSize: 14, justifyContent: "center" }}
+                >
+                  Solicitar Atendimento
                 </Link>
-              </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>
