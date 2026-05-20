@@ -1,11 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "export",
+  trailingSlash: true,
   images: {
-    domains: [],
-    formats: ["image/avif", "image/webp"],
-  },
-  experimental: {
-    optimizeCss: false,
+    unoptimized: true,
   },
 };
 
